@@ -1,0 +1,2 @@
+C:\Users\User\Source\Repos\HttpNewsPAT_True\HttpNewsPAT_True\obj\Debug\HttpNewsPAT_True.csproj.AssemblyReference.cache
+C:\Users\User\Source\Repos\HttpNewsPAT_True\HttpNewsPAT_True\obj\Debug\HttpNewsPAT_True.csproj.CoreCompileInputs.cache
