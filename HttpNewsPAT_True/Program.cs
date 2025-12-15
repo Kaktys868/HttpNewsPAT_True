@@ -14,32 +14,49 @@ namespace HttpNewsPAT_True
 {
     public class Program
     {
-        public static string url = "";
+        public static string url = "https://kupiprodai.ru/";
         static void Main(string[] args)
         {
-            string logFilePath = "otladka.txt";
-            Trace.Listeners.Clear();
-            Trace.Listeners.Add(new TextWriterTraceListener(logFilePath));
-            Trace.AutoFlush = true;
+            string y;
+            string[] d = new string[3];
+            do {
+                Console.WriteLine("1. Парсим сайт вот такой: https://kupiprodai.ru/." +
+                    "\n\nИЛИ" +
+                    "\n\n2. Добавляем на сервер запись.");
+                string x = Console.ReadLine();
+                if (x == "1")
+                {
+                    string logFilePath = "otladka.txt";
+                    Trace.Listeners.Clear();
+                    Trace.Listeners.Add(new TextWriterTraceListener(logFilePath));
+                    Trace.AutoFlush = true;
 
-            CookieContainer cookieContainer = SingIn("student", "Asdfg123");
+                    CookieContainer cookieContainer = SingIn("student", "Asdfg123");
 
-            Uri uri = new Uri(url);
-            CookieCollection allCookies = cookieContainer.GetCookies(uri);
+                    Uri uri = new Uri(url);
+                    CookieCollection allCookies = cookieContainer.GetCookies(uri);
 
-            Console.WriteLine("\n=== ВСЕ ПОЛУЧЕННЫЕ КУКИ ===");
-            foreach (Cookie cookie in allCookies)
-            {
-                Console.WriteLine($"Имя: {cookie.Name}");
-                Console.WriteLine($"Значение: {cookie.Value}");
-                Console.WriteLine($"Домен: {cookie.Domain}");
-                Console.WriteLine($"Путь: {cookie.Path}");
-                Console.WriteLine("---");
+                    GetContent(cookieContainer);
+                }
+                else if (x == "2")
+                {
+                    Console.WriteLine("1. Ссылка на фото(необязательно)." +
+                    "\n2. Название." +
+                    "\n3. Описание.");
+                    for (int i = 0; i < 3; i++)
+                    {
+                        y = Console.ReadLine();
+                        d[i] = y;
+                    }
+                    Add(d);
+                }
             }
+            while (Console.ReadKey(true).Key != ConsoleKey.Enter);
+        }
 
-            GetContent(cookieContainer);
+        public static void Add(string[] d)
+        {
 
-            Console.Read();
         }
 
         public static CookieContainer SingIn(string Login, string Password)
@@ -75,7 +92,6 @@ namespace HttpNewsPAT_True
             {
                 Debug.WriteLine($"Статус выполнения: {response.StatusCode}");
                 string responseFromServer = new StreamReader(response.GetResponseStream()).ReadToEnd();
-                Console.WriteLine("Ответ: " + responseFromServer);
                 return responseFromServer;
             }
         }

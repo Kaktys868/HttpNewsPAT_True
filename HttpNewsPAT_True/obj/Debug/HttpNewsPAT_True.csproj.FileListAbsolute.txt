@@ -1,2 +1,14 @@
 C:\Users\User\Source\Repos\HttpNewsPAT_True\HttpNewsPAT_True\obj\Debug\HttpNewsPAT_True.csproj.AssemblyReference.cache
 C:\Users\User\Source\Repos\HttpNewsPAT_True\HttpNewsPAT_True\obj\Debug\HttpNewsPAT_True.csproj.CoreCompileInputs.cache
+C:\Users\User\Source\Repos\HttpNewsPAT_True\HttpNewsPAT_True\bin\Debug\HttpNewsPAT_True.exe.config
+C:\Users\User\Source\Repos\HttpNewsPAT_True\HttpNewsPAT_True\bin\Debug\HttpNewsPAT_True.exe
+C:\Users\User\Source\Repos\HttpNewsPAT_True\HttpNewsPAT_True\bin\Debug\HttpNewsPAT_True.pdb
+C:\Users\User\Source\Repos\HttpNewsPAT_True\HttpNewsPAT_True\bin\Debug\Fizzler.dll
+C:\Users\User\Source\Repos\HttpNewsPAT_True\HttpNewsPAT_True\bin\Debug\HtmlAgilityPack.dll
+C:\Users\User\Source\Repos\HttpNewsPAT_True\HttpNewsPAT_True\bin\Debug\Fizzler.pdb
+C:\Users\User\Source\Repos\HttpNewsPAT_True\HttpNewsPAT_True\bin\Debug\HtmlAgilityPack.pdb
+C:\Users\User\Source\Repos\HttpNewsPAT_True\HttpNewsPAT_True\bin\Debug\HtmlAgilityPack.xml
+C:\Users\User\Source\Repos\HttpNewsPAT_True\HttpNewsPAT_True\obj\Debug\HttpNews.1471C721.Up2Date
+C:\Users\User\Source\Repos\HttpNewsPAT_True\HttpNewsPAT_True\obj\Debug\HttpNewsPAT_True.exe
+C:\Users\User\Source\Repos\HttpNewsPAT_True\HttpNewsPAT_True\obj\Debug\HttpNewsPAT_True.pdb
+C:\Users\User\Source\Repos\HttpNewsPAT_True\HttpNewsPAT_True\obj\Debug\HttpNewsPAT_True.exe.config
