@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
+using System.Runtime.Remoting.Messaging;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -11,7 +13,22 @@ namespace HttpNewsPAT_True
     {
         static void Main(string[] args)
         {
-            WebRequest request = WebRequest.Create("");
+            WebRequest request = WebRequest.Create(""); 
+            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+
+            Stream dataStream = response.GetResponseStream();
+            StreamReader reader = new StreamReader(dataStream);
+
+            string responseFromServer = reader.ReadToEnd();
+
+            Console.WriteLine(response.StatusDescription);
+            Console.WriteLine(responseFromServer);
+
+            reader.Close();
+            dataStream.Close();
+            response.Close();
+
+            Console.Read();
         }
     }
 }
