@@ -122,7 +122,7 @@ namespace HttpNewsPAT_True
                 return responseFromServer;
             }
         }
-        public static void ParsingHtml(string htmlCode)
+        public static async Task<string> ParsingHtml(string htmlCode)
         {
             var html = new HtmlDocument();
             html.LoadHtml(htmlCode);
@@ -133,8 +133,9 @@ namespace HttpNewsPAT_True
                 var src = DivNews.ChildNodes[1].GetAttributeValue("src", "none");
                 var name = DivNews.ChildNodes[3].InnerText;
                 var description = DivNews.ChildNodes[5].InnerText;
-                Console.WriteLine(name + "\n" + "Изображение: " + src + "\n" + "Описание: " + description + "\n");
+                return name + "\n" + "Изображение: " + src + "\n" + "Описание: " + description + "\n";
             }
+            return null ;
         }
     }
 }
