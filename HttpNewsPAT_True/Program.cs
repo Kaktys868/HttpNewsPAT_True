@@ -1,4 +1,5 @@
-﻿using HtmlAgilityPack;
+﻿using Fizzler;
+using HtmlAgilityPack;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -6,6 +7,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Runtime.Remoting.Messaging;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,8 +16,10 @@ namespace HttpNewsPAT_True
 {
     public class Program
     {
+        private static readonly HttpClient _httpClient = new HttpClient();
         public static string url = "https://kupiprodai.ru/";
-        static void Main(string[] args)
+        public static string s;
+        static async Task Main(string[] args)
         {
             string y;
             string[] d = new string[3];
@@ -31,15 +35,13 @@ namespace HttpNewsPAT_True
                     Trace.Listeners.Add(new TextWriterTraceListener(logFilePath));
                     Trace.AutoFlush = true;
 
-                    CookieContainer cookieContainer = SingIn("student", "Asdfg123");
-
-                    Uri uri = new Uri(url);
-                    CookieCollection allCookies = cookieContainer.GetCookies(uri);
+                    Cookie cookieContainer = await SingIn("student", "Asdfg123");
 
                     GetContent(cookieContainer);
                 }
                 else if (x == "2")
                 {
+                    Cookie cookieContainer = await SingIn("admin", "admin", "http://10.111.20.114/ajax/login.php");
                     Console.WriteLine("1. Ссылка на фото(необязательно)." +
                     "\n2. Название." +
                     "\n3. Описание.");
@@ -48,18 +50,38 @@ namespace HttpNewsPAT_True
                         y = Console.ReadLine();
                         d[i] = y;
                     }
-                    Add(d);
+                    Add(d, cookieContainer);
+                    Console.WriteLine(s);
                 }
             }
             while (Console.ReadKey(true).Key != ConsoleKey.Enter);
         }
-
-        public static void Add(string[] d)
+        public static async Task<bool> Add(string[] d, Cookie token)
         {
+            string url = "http://10.111.20.114/ajax/add.php";
 
+            var cookieContainer = new CookieContainer();
+            var handler = new HttpClientHandler
+            {
+                CookieContainer = cookieContainer,
+                UseCookies = true
+            };
+            cookieContainer.Add(new Uri(url), new System.Net.Cookie(token.Name, token.Value, token.Path, token.Domain));
+
+            using (var client = new HttpClient(handler))
+            {
+                var postData = new FormUrlEncodedContent(new[]
+                {
+                        new KeyValuePair<string, string>("src", d[0]),
+                        new KeyValuePair<string, string>("name", d[1]),
+                        new KeyValuePair<string, string>("description", d[2])
+                    });
+
+                var response = await client.PostAsync(url, postData);
+                return response.StatusCode == HttpStatusCode.OK;
+            }
         }
-
-        public static CookieContainer SingIn(string Login, string Password)
+        public static async Task<Cookie> SingIn(string Login, string Password, string url= "https://kupiprodai.ru/")
         {
             Debug.WriteLine($"Выполняем запрос: {url}");
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
@@ -79,15 +101,20 @@ namespace HttpNewsPAT_True
                 Debug.WriteLine($"Статус выполнения: {response.StatusCode}");
                 string responseFromServer = new StreamReader(response.GetResponseStream()).ReadToEnd();
                 Console.WriteLine(responseFromServer);
-                return request.CookieContainer;
+                var cookies = request.CookieContainer.GetCookies(new Uri(url));
+                var token = cookies["token"];
+
+                if (token != null)
+                {
+                    return new Cookie(token.Name, token.Value, token.Path, token.Domain);
+                }
             }
+            return null;
         }
-        public static string GetContent(CookieContainer cookieContainer)
+        public static async Task<string> GetContent(Cookie cookieContainer)
         {
             Debug.WriteLine($"Выполняем запрос: {url}");
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-            request.CookieContainer = cookieContainer;  // Используем весь контейнер
-
             using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
             {
                 Debug.WriteLine($"Статус выполнения: {response.StatusCode}");
