@@ -3,6 +3,7 @@ using HtmlAgilityPack;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -14,9 +15,14 @@ using System.Threading.Tasks;
 
 namespace HttpNewsPAT_True
 {
+    public class parse
+    {
+        public string Src { get; set; }
+        public string Name { get; set; }
+        //public string Description { get; set; }
+    }
     public class Program
     {
-        private static readonly HttpClient _httpClient = new HttpClient();
         public static string url = "https://kupiprodai.ru/";
         public static string s;
         static async Task Main(string[] args)
@@ -28,6 +34,7 @@ namespace HttpNewsPAT_True
                     "\n\nИЛИ" +
                     "\n\n2. Добавляем на сервер запись.");
                 string x = Console.ReadLine();
+
                 if (x == "1")
                 {
                     string logFilePath = "otladka.txt";
@@ -37,7 +44,16 @@ namespace HttpNewsPAT_True
 
                     Cookie cookieContainer = await SingIn("student", "Asdfg123");
 
-                    GetContent(cookieContainer);
+                    string htmlCode = await GetContent(cookieContainer);
+                    var newsList = ParsingHtml(htmlCode);
+                    foreach (var news in newsList)
+                    {
+                        Console.WriteLine($"\n{news.Name}");
+                        /*if (!string.IsNullOrEmpty(news.Description))
+                        {
+                            Console.WriteLine($"{news.Description}");
+                        }*/
+                    }
                 }
                 else if (x == "2")
                 {
@@ -81,7 +97,7 @@ namespace HttpNewsPAT_True
                 return response.StatusCode == HttpStatusCode.OK;
             }
         }
-        public static async Task<Cookie> SingIn(string Login, string Password, string url= "https://kupiprodai.ru/")
+        public static async Task<Cookie> SingIn(string Login, string Password, string url = "https://kupiprodai.ru/")
         {
             Debug.WriteLine($"Выполняем запрос: {url}");
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
@@ -100,7 +116,6 @@ namespace HttpNewsPAT_True
             {
                 Debug.WriteLine($"Статус выполнения: {response.StatusCode}");
                 string responseFromServer = new StreamReader(response.GetResponseStream()).ReadToEnd();
-                Console.WriteLine(responseFromServer);
                 var cookies = request.CookieContainer.GetCookies(new Uri(url));
                 var token = cookies["token"];
 
@@ -122,20 +137,26 @@ namespace HttpNewsPAT_True
                 return responseFromServer;
             }
         }
-        public static async Task<string> ParsingHtml(string htmlCode)
+        public static List<parse> ParsingHtml(string htmlCode)
         {
+            List<parse> newsList = new List<parse>();
             var html = new HtmlDocument();
             html.LoadHtml(htmlCode);
+
             var Document = html.DocumentNode;
-            IEnumerable DivsNews = Document.Descendants(0).Where(n => n.HasClass("news"));
+            IEnumerable<HtmlNode> DivsNews = Document.SelectNodes("//div[@class='gallery_item']");
+
             foreach (HtmlNode DivNews in DivsNews)
             {
                 var src = DivNews.ChildNodes[1].GetAttributeValue("src", "none");
-                var name = DivNews.ChildNodes[3].InnerText;
-                var description = DivNews.ChildNodes[5].InnerText;
-                return name + "\n" + "Изображение: " + src + "\n" + "Описание: " + description + "\n";
+                var name = DivNews.ChildNodes[3].InnerText.Trim();
+                //var description = DivNews.ChildNodes[5].InnerText.Trim();
+
+                newsList.Add(new parse { Src = src, Name = name
+                    //, Description = description
+                    });
             }
-            return null ;
+            return newsList;
         }
     }
 }
